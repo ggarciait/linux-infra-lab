@@ -18,9 +18,9 @@ The result is a **zero‑touch deployment pipeline** capable of standing up a fu
 **Developer → GitHub → GitHub Actions → Terraform → AWS VPC → EC2 → Ansible (SSH) → Apache Web Server**
 
 ### 🔍 What’s happening under the hood  
-- **Terraform** builds the AWS environment (VPC, subnet, route table, IGW, security group, EC2).  
+- **Terraform** provisions the AWS infrastructure—including the VPC, subnet, route table, Internet Gateway, security group, and EC2 instance—ensuring deployments are reproducible, version-controlled, and easy to recreate across environments.  
 - **GitHub Actions** runs Terraform automatically on push (CI/CD).  
-- **Ansible** connects via SSH to configure the EC2 instance.  
+- **Ansible** connects securely over SSH to configure the EC2 instance, installing and configuring Apache while ensuring server configuration is consistent and repeatable.  
 - **Apache** is installed, enabled, and served publicly.  
 - **Security groups** restrict inbound traffic to only what’s required.  
 - **Infrastructure is fully reproducible** and can be destroyed in seconds.
