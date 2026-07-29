@@ -1,5 +1,5 @@
 # 🚀 Automated Linux Infrastructure Lab  
-A production‑style Infrastructure‑as‑Code project that provisions, configures, and validates a secure Linux web server on AWS using Terraform, Ansible, and a CI/CD pipeline.
+A production-style Infrastructure-as-Code project that provisions, configures, and validates a secure Linux web server on AWS using Terraform and Ansible.
 
 ## 🏗️ Architecture Diagram  
 ![Automated Linux Infrastructure Diagram](linux_infra_architecture.png)
@@ -10,7 +10,7 @@ A production‑style Infrastructure‑as‑Code project that provisions, configu
 ## 📌 Executive Summary  
 This project implements a fully automated cloud infrastructure workflow that mirrors real DevOps and platform engineering practices. It provisions AWS resources using Terraform, configures a Linux server using Ansible, and enforces repeatability, security, and scalability through automation.
 
-The result is a **zero‑touch deployment pipeline** capable of standing up a functional Apache web server on AWS with no manual configuration.
+The result is a reproducible infrastructure deployment workflow that provisions AWS resources with Terraform and configures a secure Linux web server using Ansible.
 
 ---
 
@@ -19,7 +19,7 @@ The result is a **zero‑touch deployment pipeline** capable of standing up a fu
 
 ### 🔍 What’s happening under the hood  
 - **Terraform** provisions the AWS infrastructure—including the VPC, subnet, route table, Internet Gateway, security group, and EC2 instance—ensuring deployments are reproducible, version-controlled, and easy to recreate across environments.  
-- **GitHub Actions** runs Terraform automatically on push (CI/CD).  
+- **Terraform** provisions the AWS resources, and Ansible performs repeatable server configuration over SSH.
 - **Ansible** connects securely over SSH to configure the EC2 instance, installing and configuring Apache while ensuring server configuration is consistent and repeatable.  
 - **Apache** is installed, enabled, and served publicly.  
 - **Security groups** restrict inbound traffic to only what’s required.  
@@ -38,7 +38,7 @@ This is the same pattern used in real production environments — just scoped to
 | OS / Platform | Linux (Amazon Linux 2 / RHEL) |
 | Networking | SSH, HTTP |
 | Version Control | Git & GitHub |
-| CI/CD | GitHub Actions |
+| CI/CD |
 
 ---
 
@@ -46,8 +46,7 @@ This is the same pattern used in real production environments — just scoped to
 - Automated provisioning of AWS compute and networking resources  
 - Secure SSH access using key‑based authentication  
 - Automated server configuration using Ansible playbooks  
-- Apache web server deployment with zero manual steps  
-- CI/CD pipeline for Terraform plan/apply  
+- Apache web server deployment with zero manual steps
 - Cost‑controlled lifecycle (easy teardown with `terraform destroy`)  
 - Clean, modular project structure suitable for scaling  
 
@@ -164,7 +163,7 @@ resource "aws_instance" "linux_server" {
 ---
 
 ## 🎯 Key Learning Outcomes  
-- Built a fully automated cloud deployment pipeline  
+- Built a reproducible Infrastructure-as-Code deployment workflow.
 - Applied Infrastructure as Code (IaC) principles using Terraform  
 - Automated server configuration using Ansible  
 - Strengthened understanding of AWS networking and security  
