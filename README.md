@@ -4,7 +4,7 @@ A hands-on Infrastructure-as-Code lab that provisions an AWS EC2 Linux server wi
 
 ## 🏗️ Architecture Diagram
 
-![Automated Linux Infrastructure Diagram](linux_infra_architecture.png)
+![Automated Linux Infrastructure Diagram](new%20linux_infra_architecture.png)
 
 ---
 
