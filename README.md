@@ -166,8 +166,7 @@ resource "aws_instance" "linux_server" {
 - Built a reproducible Infrastructure-as-Code deployment workflow.
 - Applied Infrastructure as Code (IaC) principles using Terraform  
 - Automated server configuration using Ansible  
-- Strengthened understanding of AWS networking and security  
-- Practiced CI/CD automation with GitHub Actions  
+- Strengthened understanding of AWS networking and security
 - Gained hands‑on experience with Linux server administration  
 - Demonstrated ability to design and document real‑world infrastructure  
 
@@ -176,7 +175,6 @@ resource "aws_instance" "linux_server" {
 ## 📄 Resume‑Ready Bullet Points  
 - Designed and deployed automated AWS infrastructure using Terraform (IaC)  
 - Implemented configuration management with Ansible to provision Apache web servers  
-- Built a CI/CD pipeline using GitHub Actions to automate Terraform workflows  
 - Secured cloud resources using SSH key pairs and restrictive security groups  
 - Documented architecture and deployment workflows for maintainability and scalability  
 
