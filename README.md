@@ -1,194 +1,242 @@
-# 🚀 Automated Linux Infrastructure Lab  
-A production-style Infrastructure-as-Code project that provisions, configures, and validates a secure Linux web server on AWS using Terraform and Ansible.
+# 🚀 Automated Linux Infrastructure Lab
 
-## 🏗️ Architecture Diagram  
+A hands-on Infrastructure-as-Code lab that provisions an AWS EC2 Linux server with Terraform and configures an Apache web server with Ansible.
+
+## 🏗️ Architecture Diagram
+
 ![Automated Linux Infrastructure Diagram](linux_infra_architecture.png)
 
+---
+
+## 📌 Project Overview
+
+This project demonstrates a practical infrastructure automation workflow using Terraform and Ansible.
+
+Terraform defines and provisions the AWS EC2 instance and its security group. After the instance is available, Ansible connects to the server over SSH, installs Apache (httpd), and ensures the web service is started and enabled.
+
+The repository is intentionally small and focused on the relationship between infrastructure provisioning, Linux administration, and configuration management.
 
 ---
 
-## 📌 Executive Summary  
-This project implements a fully automated cloud infrastructure workflow that mirrors real DevOps and platform engineering practices. It provisions AWS resources using Terraform, configures a Linux server using Ansible, and enforces repeatability, security, and scalability through automation.
+## 🧠 Current Architecture
 
-The result is a reproducible infrastructure deployment workflow that provisions AWS resources with Terraform and configures a secure Linux web server using Ansible.
+**Administrator → Terraform → AWS EC2 + Security Group → Ansible over SSH → Apache Web Server**
 
----
+### What the code currently does
 
-## 🧠 High‑Level Architecture  
-**Developer → GitHub → GitHub Actions → Terraform → AWS VPC → EC2 → Ansible (SSH) → Apache Web Server**
+- **Terraform** uses the AWS provider in `us-east-1`.
+- **Terraform** creates an AWS security group that permits inbound SSH on TCP port 22.
+- **Terraform** creates a `t3.micro` EC2 instance using the configured AMI and key pair.
+- **Ansible** connects to the EC2 host over SSH as `ec2-user`.
+- **Ansible** installs the Apache `httpd` package.
+- **Ansible** starts Apache and enables it to start automatically.
+- **Git/GitHub** provide version control for the infrastructure and configuration-management code.
 
-### 🔍 What’s happening under the hood  
-- **Terraform** provisions the AWS infrastructure—including the VPC, subnet, route table, Internet Gateway, security group, and EC2 instance—ensuring deployments are reproducible, version-controlled, and easy to recreate across environments.  
-- **Terraform** provisions the AWS resources, and Ansible performs repeatable server configuration over SSH.
-- **Ansible** connects securely over SSH to configure the EC2 instance, installing and configuring Apache while ensuring server configuration is consistent and repeatable.  
-- **Apache** is installed, enabled, and served publicly.  
-- **Security groups** restrict inbound traffic to only what’s required.  
-- **Infrastructure is fully reproducible** and can be destroyed in seconds.
-
-This is the same pattern used in real production environments — just scoped to a single‑server architecture.
+> **Note:** The current Terraform configuration does not create a custom VPC, subnet, Internet Gateway, route table, or GitHub Actions workflow.
 
 ---
 
-## 🛠️ Technologies & Tools  
+## 🛠️ Technologies & Tools
+
 | Category | Tools |
-|---------|-------|
+|---|---|
 | Infrastructure as Code | Terraform |
 | Configuration Management | Ansible |
-| Cloud Provider | AWS (EC2, VPC, IGW, SG) |
-| OS / Platform | Linux (Amazon Linux 2 / RHEL) |
-| Networking | SSH, HTTP |
+| Cloud Provider | AWS EC2 |
+| Operating System | Linux / Amazon Linux |
+| Web Server | Apache HTTP Server (httpd) |
+| Remote Administration | SSH |
 | Version Control | Git & GitHub |
-| CI/CD |
 
 ---
 
-## ⚙️ Key Features  
-- Automated provisioning of AWS compute and networking resources  
-- Secure SSH access using key‑based authentication  
-- Automated server configuration using Ansible playbooks  
-- Apache web server deployment with zero manual steps
-- Cost‑controlled lifecycle (easy teardown with `terraform destroy`)  
-- Clean, modular project structure suitable for scaling  
+## ⚙️ Implemented Features
+
+- AWS EC2 provisioning with Terraform
+- Terraform-managed EC2 security group
+- SSH key-based server access
+- Ansible-based Linux configuration
+- Automated Apache package installation
+- Automated Apache service startup and enablement
+- Terraform provider dependency lock file
+- Git exclusions for private keys, Terraform working files, and local state
+- Infrastructure teardown through Terraform
 
 ---
 
-## 🔐 Security Considerations  
-- SSH key‑based authentication (no passwords)  
-- Security groups restrict inbound traffic to SSH + HTTP  
-- Sensitive files excluded via `.gitignore`  
-- Terraform state handled locally (can be upgraded to remote backend)  
-- Principle of least privilege applied to network access  
+## 🔐 Security Notes
 
----
+The repository excludes common sensitive/local infrastructure files through `.gitignore`, including:
 
-## 📂 Project Structure  
+```text
+*.pem
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
 ```
+
+The current Terraform security group permits SSH on port 22 from `0.0.0.0/0`. This was used for the lab and is intentionally documented as a limitation rather than a production security configuration.
+
+For a production-style deployment, SSH should be restricted to a trusted IP/CIDR range or replaced with a more controlled administrative access method.
+
+The SSH private key itself is not stored in this repository.
+
+---
+
+## 📂 Project Structure
+
+```text
 linux-infra-lab/
-│
-├── terraform/
-│   ├── ec2.tf
-│   ├── variables.tf
-│   └── outputs.tf
-│
+├── .gitignore
+├── LICENSE
+├── README.md
+├── linux_infra_architecture.png
 ├── ansible/
 │   ├── inventory
+│   ├── inventory.txt
 │   └── webserver.yml
-│
-├── architecture.dot
-├── linux_infra_architecture.png
-└── README.md
+└── terraform/
+    ├── .terraform.lock.hcl
+    └── ec2.tf
 ```
+
+> The two inventory files reflect lab connection information and different private-key path formats used during the project.
 
 ---
 
-## 🚀 Deployment Workflow  
+## 🚀 Deployment Workflow
 
-### **1. Provision AWS Infrastructure (Terraform)**  
+### 1. Provision the AWS Infrastructure
+
+From the Terraform directory:
+
 ```bash
+cd terraform
 terraform init
+terraform plan
 terraform apply
 ```
 
-Creates:  
-- EC2 instance  
-- Security group  
-- Networking components (VPC, subnet, IGW, route table)
+The current Terraform configuration creates:
+
+- An EC2 security group
+- A `t3.micro` EC2 instance associated with that security group
+
+The configuration expects an existing AWS key pair named `linux-lab-key`.
 
 ---
 
-### **2. Configure the Server (Ansible)**  
+### 2. Configure the Linux Server with Ansible
+
+After the EC2 instance is running, update the Ansible inventory with the current EC2 public IP and the correct path to the SSH private key.
+
+Then run:
+
 ```bash
+cd ansible
 ansible-playbook -i inventory webserver.yml
 ```
 
-Automates:  
-- Apache installation  
-- Service enablement  
-- Basic hardening  
+The playbook:
+
+1. Connects to the host in the `web` inventory group.
+2. Uses privilege escalation with `become: yes`.
+3. Installs the `httpd` package.
+4. Starts the `httpd` service.
+5. Enables `httpd` to start automatically.
 
 ---
 
-### **3. Validate Deployment**  
-Open in a browser:
+### 3. Validate the Server Configuration
 
-```
-http://<PUBLIC_IP>
-```
+Confirm that the Ansible playbook completes successfully and that Apache is running on the EC2 instance.
 
-You should see the Apache default page.
+> **Current limitation:** The Terraform security group in this repository does not define an inbound HTTP/80 rule. Public browser access to Apache therefore requires an appropriate HTTP rule to be added separately.
 
 ---
 
-### **4. Destroy Infrastructure (Cost Control)**  
+### 4. Destroy the Infrastructure
+
+When the lab is complete:
+
 ```bash
+cd terraform
 terraform destroy
 ```
 
----
-
-## 📜 Example Terraform Resource  
-```hcl
-resource "aws_instance" "linux_server" {
-  ami           = "ami-xxxxxxxx" # Region-specific AMI
-  instance_type = "t3.micro"
-  key_name      = "linux-lab-key"
-
-  tags = {
-    Name = "LinuxLabServer"
-  }
-}
-```
+This removes the Terraform-managed EC2 instance and security group.
 
 ---
 
-## 📜 Example Ansible Playbook  
-```yaml
-- name: Configure Web Server
-  hosts: web
-  become: yes
+## 📜 Terraform Configuration
 
-  tasks:
-    - name: Install Apache
-      yum:
-        name: httpd
-        state: present
+The Terraform configuration defines the AWS provider, security group, and EC2 instance in `terraform/ec2.tf`.
 
-    - name: Start Apache
-      service:
-        name: httpd
-        state: started
-        enabled: true
-```
+Key implementation details include:
+
+- AWS region: `us-east-1`
+- Instance type: `t3.micro`
+- Existing key pair: `linux-lab-key`
+- Inbound SSH: TCP/22
+- Outbound traffic: allowed
+- EC2 tag: `Name = "LinuxLabServer"`
 
 ---
 
-## 🎯 Key Learning Outcomes  
-- Built a reproducible Infrastructure-as-Code deployment workflow.
-- Applied Infrastructure as Code (IaC) principles using Terraform  
-- Automated server configuration using Ansible  
-- Strengthened understanding of AWS networking and security
-- Gained hands‑on experience with Linux server administration  
-- Demonstrated ability to design and document real‑world infrastructure  
+## 📜 Ansible Configuration
+
+The Ansible playbook in `ansible/webserver.yml` targets the `web` host group and uses privilege escalation to configure Apache.
+
+It performs two configuration tasks:
+
+- Ensures `httpd` is installed.
+- Ensures `httpd` is started and enabled.
+
+This demonstrates repeatable Linux configuration using Ansible rather than manually installing and starting the service on the server.
 
 ---
 
-## 📄 Resume‑Ready Bullet Points  
-- Designed and deployed automated AWS infrastructure using Terraform (IaC)  
-- Implemented configuration management with Ansible to provision Apache web servers  
-- Secured cloud resources using SSH key pairs and restrictive security groups  
-- Documented architecture and deployment workflows for maintainability and scalability  
+## 🎯 Key Learning Outcomes
+
+- Practiced Infrastructure as Code with Terraform
+- Provisioned AWS EC2 infrastructure from declarative configuration
+- Managed basic AWS network access through a Terraform security group
+- Used SSH key-based authentication for Linux administration
+- Applied Ansible configuration management to an AWS-hosted Linux server
+- Automated Apache installation and service management
+- Used Git and GitHub to version infrastructure and configuration code
+- Practiced infrastructure lifecycle management, including teardown
 
 ---
 
-## 🔥 Future Enhancements  
-- Restrict SSH access to a specific IP range  
-- Add HTTPS using Let’s Encrypt  
-- Introduce Terraform modules for multi‑environment deployments  
-- Expand CI/CD pipeline to include Ansible automation  
-- Add CloudWatch monitoring and logging  
-- Scale to multi‑tier architecture with load balancing  
+## 📄 Resume-Ready Bullet Points
+
+- Provisioned AWS EC2 infrastructure using Terraform and Infrastructure-as-Code practices.
+- Automated Linux web-server configuration with Ansible, including Apache installation and service management.
+- Configured SSH key-based administrative access and Terraform-managed security-group rules.
+- Version-controlled Terraform and Ansible configuration in GitHub while excluding private keys and local Terraform state.
 
 ---
 
-## ✅ Conclusion  
-This project demonstrates the ability to design, automate, and manage cloud infrastructure using industry‑standard DevOps tools. It reflects practical experience with IaC, configuration management, CI/CD, cloud networking, and secure system design — all essential skills for modern DevOps and platform engineering roles.
+## 🔮 Future Enhancements
+
+Potential extensions to the current lab include:
+
+- Restrict SSH access to a trusted IP/CIDR range
+- Add Terraform-managed HTTP/HTTPS security-group rules
+- Replace hard-coded values with Terraform variables
+- Add Terraform outputs for instance connection information
+- Build a custom VPC, subnet, Internet Gateway, and route table
+- Add HTTPS
+- Introduce reusable Terraform modules
+- Add remote Terraform state
+- Add monitoring and logging
+- Add GitHub Actions only if CI/CD automation is intentionally implemented
+
+---
+
+## ✅ Conclusion
+
+This project demonstrates a focused infrastructure automation workflow: Terraform provisions an AWS EC2 Linux server and its security group, and Ansible performs repeatable server configuration by installing and managing Apache.
+
+The repository documents the infrastructure that is currently implemented while leaving more advanced networking, security, observability, and CI/CD capabilities as future enhancements.
